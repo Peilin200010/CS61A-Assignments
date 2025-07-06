@@ -25,6 +25,12 @@ def num_eights(n):
     True
     """
     "*** YOUR CODE HERE ***"
+    if n == 0:
+        return 0
+    elif n % 10 == 8:
+        return 1 + num_eights(n // 10)
+    else:
+        return num_eights(n // 10)
 
 
 def digit_distance(n):
@@ -47,6 +53,11 @@ def digit_distance(n):
     True
     """
     "*** YOUR CODE HERE ***"
+    if n // 10 == 0:
+        return 0
+    else:
+        n, k = n//10, n % 10
+        return abs(k - n % 10) + digit_distance(n)
 
 
 def interleaved_sum(n, odd_func, even_func):
@@ -71,6 +82,14 @@ def interleaved_sum(n, odd_func, even_func):
     True
     """
     "*** YOUR CODE HERE ***"
+    def helper(i, is_odd):
+        if i > n:
+            return 0
+        if is_odd:
+            return odd_func(i) + helper(i + 1, False)
+        else:
+            return even_func(i) + helper(i + 1, True)
+    return helper(1, True)
 
 
 def next_smaller_dollar(bill):
@@ -107,6 +126,14 @@ def count_dollars(total):
     True
     """
     "*** YOUR CODE HERE ***"
+    def count_with_bill(bill, remaining):
+        """Count ways to make change for remaining using bills >= bill."""
+        if remaining == 0:
+            return 1
+        if remaining < 0 or bill is None:
+            return 0
+        return count_with_bill(bill, remaining - bill) + count_with_bill(next_smaller_dollar(bill), remaining)
+    return count_with_bill(100, total)
 
 
 def next_larger_dollar(bill):
@@ -143,6 +170,14 @@ def count_dollars_upward(total):
     True
     """
     "*** YOUR CODE HERE ***"
+    def count_with_bill(bill, remaining):
+        """Count ways to make change for remaining using bills <= bill."""
+        if remaining == 0:
+            return 1
+        if remaining < 0 or bill is None:
+            return 0
+        return count_with_bill(bill, remaining - bill) + count_with_bill(next_larger_dollar(bill), remaining)
+    return count_with_bill(1, total)
 
 
 def print_move(origin, destination):
@@ -178,6 +213,13 @@ def move_stack(n, start, end):
     """
     assert 1 <= start <= 3 and 1 <= end <= 3 and start != end, "Bad start/end"
     "*** YOUR CODE HERE ***"
+    if n == 1:
+        print_move(start, end)
+    else:
+        other = 6 - start - end
+        move_stack(n - 1, start, other)
+        print_move(start, end)
+        move_stack(n - 1, other, end)
 
 
 from operator import sub, mul
@@ -193,5 +235,8 @@ def make_anonymous_factorial():
     ...     ['Assign', 'AnnAssign', 'AugAssign', 'NamedExpr', 'FunctionDef', 'Recursion'])
     True
     """
-    return 'YOUR_EXPRESSION_HERE'
+    return (lambda f: (lambda x: f(lambda y: x(x)(y))) (lambda x: f(lambda y: x(x)(y)))) (lambda f: lambda n: 1 if n == 1 else n * f(n - 1))
 
+# This is the Y combinator. It enables recursion anonymously by self-applying a lambda (x(x)) to carry the function logic.
+(lambda f: (lambda x: f(lambda y: x(x)(y))) 
+          (lambda x: f(lambda y: x(x)(y))))
