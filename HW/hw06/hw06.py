@@ -104,6 +104,16 @@ def store_digits(n):
     >>> print("Do not use str or reversed!") if any([r in cleaned for r in ["str", "reversed"]]) else None
     """
     "*** YOUR CODE HERE ***"
+    digits = []
+    while n > 0:
+        digits.append(n % 10)
+        n //= 10
+    def build_link(digits):
+        if not digits:
+            return Link.empty
+        else:
+            return Link(digits.pop(), build_link(digits))
+    return build_link(digits)  # Reverse the digits to store them in the correct order
 
 
 def deep_map_mut(func, s):
